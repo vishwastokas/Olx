@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# URL of the NAV text file
+URL="https://www.amfiindia.com/spages/NAVAll.txt"
+OUTPUT="nav_data.tsv"
+TMPFILE="nav_temp.txt"
+
+# Download file
+curl -s "$URL" -o "$TMPFILE"
+
+# Extract header and relevant fields
+echo -e "Scheme Name\tAsset Value (NAV)" > "$OUTPUT"
+
+# Skip header lines and blank lines, then extract required fields
+awk -F ';' 'NF >= 5 && $4 != "" { print $4 "\t" $5 }' "$TMPFILE" >> "$OUTPUT"
+
+# Cleanup
+rm "$TMPFILE"
+
+echo "✅ NAV data saved to $OUTPUT"
